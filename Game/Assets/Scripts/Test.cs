@@ -3,19 +3,12 @@ using LinearAlgebra;
 using System;
 using UnityEngine;
 
-public class Main : MonoBehaviour {
+public class Test : MonoBehaviour {
 
     private void Start() {
-        TestNetwork();
         TestAlgebra();
+        TestNetwork();
         TestErrors();
-    }
-
-    private void TestNetwork() {
-        NeuralNetwork nn = new NeuralNetwork(new int[] {4, 2, 3});
-        nn.Save("test");
-        nn = NeuralNetwork.Load("test");
-        Debug.Log(nn);
     }
 
     private void TestAlgebra() {
@@ -29,21 +22,36 @@ public class Main : MonoBehaviour {
         Debug.Log(matrix);
     }
 
+    private void TestNetwork() {
+        NeuralNetwork nn = new NeuralNetwork(new int[] {4, 2, 3});
+        nn.Save("test");
+        nn = NeuralNetwork.Load("test");
+        nn.Mutate(.05f);
+        Debug.Log(nn);
+        Debug.Log(nn.FeedForward(new Vector(new float[] {1, 3, 5, 4})));
+    }
+
     private void TestErrors() {
         try {
             new Vector(new float[0]);
         } catch(ArgumentException e) {
-            Debug.Log(e);
+            Debug.LogError(e);
         }
 
         try {
             new Matrix(new float[0][]);
         } catch(ArgumentException e) {
-            Debug.Log(e);
+            Debug.LogError(e);
         }
 
         try {
             new Matrix(new float[][] {new float[0]});
+        } catch(ArgumentException e) {
+            Debug.LogError(e);
+        }
+
+        try {
+            new NeuralNetwork(new int[] {4, 2, 3}).FeedForward(new Vector(new float[] {-.5f, .1f, 2.5f}));
         } catch(ArgumentException e) {
             Debug.LogError(e);
         }
