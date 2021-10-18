@@ -7,6 +7,7 @@ namespace NN {
 
     public static class Utility {
 
+        #region IO
         private static BinaryFormatter _formatter;  //don't refer to this
         private static BinaryFormatter formatter {
             get => _formatter is null ? _formatter = new BinaryFormatter() : _formatter;    //creates instance on first reference
@@ -33,6 +34,7 @@ namespace NN {
             stream.Close();
             return data;
         }
+        #endregion
 
     }
 
@@ -43,7 +45,18 @@ namespace NN {
 
         private Matrix[] weights;
 
+        public NeuralNetwork(in NeuralNetwork network) {
+            biases = new Vector[network.biases.Length];
+            weights = new Matrix[network.weights.Length];
+            for(int i = 0; i < network.biases.Length; i++) {
+                biases[i] = new Vector(network.biases[i]);
+                weights[i] = new Matrix(network.weights[i]);
+            }
+        }
+
         public NeuralNetwork(in int[] layers) {
+            if(layers.Length < 2)
+                throw new System.ArgumentException("Network Size is invalid", nameof(layers));
             int arrsLength = layers.Length - 1;
             biases = new Vector[arrsLength];
             weights = new Matrix[arrsLength];
@@ -65,6 +78,23 @@ namespace NN {
                 for(int i = 0; i < previousSize; i++)
                     table[i] = InitArray(size);
                 return table;
+            }
+        }
+
+        public Vector FeedForward(Vector activations) {
+            for(int i = 0; i < biases.Length; i++)
+                activations = weights[i] * activations + biases[i];
+            return activations;
+        }
+
+        public void Mutate(in float amount) {
+            float max = .5f * amount, min = -max;
+            for(int i = 0; i < biases.Length; i++) {
+                for(int j = 0; j < biases[i].Size; j++)
+                    biases[i][j] += Random.Range(min, max);
+                for(int j = 0; j < weights[i].Size[1]; j++)
+                    for(int k = 0; k < weights[i].Size[0]; k++)
+                        weights[i][j, k] += Random.Range(min, max);
             }
         }
 

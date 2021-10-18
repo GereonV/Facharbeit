@@ -12,7 +12,18 @@ namespace LinearAlgebra {
         private float[] rows;
         public float this[in int i] {
             get => i < 0 || i >= rows.Length ? float.NaN : rows[i];
+            set => rows[i] = value;
         }
+
+        private Vector(in float number, in int size) {
+            if(size == 0)
+                throw new ArgumentException("Empty Vector is not allowed", nameof(size));
+            rows = new float[size];
+            for(int i = 0; i < size; i++)
+                rows[i] = number;
+        }
+
+        public Vector(in Vector vector) : this(vector.rows) {}
 
         public Vector(in float[] values) {
             if(values.Length == 0)
@@ -20,6 +31,10 @@ namespace LinearAlgebra {
             rows = new float[values.Length];
             for(int i = 0; i < values.Length; i++)
                 rows[i] = values[i];
+        }
+
+        public static Vector operator -(in Vector vector) {
+            return -1f * vector;
         }
 
         public static Vector operator +(in Vector vector1, in Vector vector2) {
@@ -31,11 +46,19 @@ namespace LinearAlgebra {
             return new Vector(values);
         }
 
+        public static Vector operator -(in Vector vector1, in Vector vector2) {
+            return vector1 + -vector2;
+        }
+
         public static Vector operator *(in float multiplier, in Vector vector) {
             float[] values = new float[vector.Size];
             for(int i = 0; i < vector.Size; i++)
-                values[i] = multiplier * vector[i];
+                values[i] = vector[i] * multiplier;
             return new Vector(values);
+        }
+
+        public static Vector operator /(in Vector vector, in float number) {
+            return (1 / number) * vector;
         }
 
         public override string ToString() {
@@ -60,6 +83,13 @@ namespace LinearAlgebra {
         }
         public float this[in int i, in int j] {
             get => i < 0 || i >= columns.Length ? float.NaN : columns[i][j];
+            set => columns[i][j] = value;
+        }
+
+        public Matrix(in Matrix matrix) {
+            columns = new Vector[matrix.Size[1]];
+            for(int i = 0; i < matrix.Size[1]; i++)
+                columns[i] = new Vector(matrix[i]);
         }
 
         public Matrix(in float[][] values) {
