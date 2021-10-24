@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void Turn(in Vector2 input, in float upDotVelocity) {
-        float turnFactor = Mathf.Clamp01(upDotVelocity / fullSteerAtVelocity);
+        float turnFactor = Mathf.Clamp01(Mathf.Abs(upDotVelocity) / fullSteerAtVelocity);
         float invert = Mathf.Sign(upDotVelocity);
         rb.MoveRotation(rb.rotation - rotationStrength * input.x * turnFactor * invert);
     }
