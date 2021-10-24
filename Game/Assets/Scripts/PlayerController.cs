@@ -1,3 +1,4 @@
+using InputManagement;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
@@ -17,22 +18,27 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] [Range(0, 1)]
     private float driftStrength = .9f;
 
+    [SerializeField]
+    private bool usePlayerInput = true;
+
     private Rigidbody2D rb;
+
+    private PlayerInputController playerInputController;
+    private NetworkInputController networkInputController;
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
+        playerInputController = new PlayerInputController();
+        networkInputController = new NetworkInputController();
     }
 
     private void FixedUpdate() {
-        Vector2 input = GetInput();
+        InputController ic = usePlayerInput ? (InputController) playerInputController : (InputController) networkInputController;
+        Vector2 input = ic.GetInput();
         float upDotVelocity = Vector2.Dot(transform.up, rb.velocity);
         Move(input, upDotVelocity);
         Turn(input, upDotVelocity);
         ControlDrift(upDotVelocity);
-    }
-
-    private Vector2 GetInput() {
-        return new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
     }
 
     private void Move(in Vector2 input, in float upDotVelocity) {
