@@ -45,6 +45,10 @@ namespace NN {
 
         private Matrix[] weights;
 
+        public int InputSize {
+            get => weights[0].Size[1];
+        }
+
         public NeuralNetwork(in NeuralNetwork network) {
             biases = new Vector[network.biases.Length];
             weights = new Matrix[network.weights.Length];

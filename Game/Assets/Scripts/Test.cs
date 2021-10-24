@@ -1,5 +1,5 @@
-using NN;
 using LinearAlgebra;
+using NN;
 using System;
 using UnityEngine;
 

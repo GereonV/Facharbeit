@@ -4,6 +4,11 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     [SerializeField]
+    private Sprite forward, left, right;
+
+    [Header("Movement")]
+
+    [SerializeField]
     private float acceleration = 20f;
 
     [SerializeField]
@@ -18,23 +23,31 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] [Range(0, 1)]
     private float driftStrength = .9f;
 
+    [Header("Input")]
+
     [SerializeField]
     private bool usePlayerInput = true;
 
+    [SerializeField]
+    private string networkName;
+
     private Rigidbody2D rb;
+    private SpriteRenderer sr;
 
     private PlayerInputController playerInputController;
     private NetworkInputController networkInputController;
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
+        sr = GetComponent<SpriteRenderer>();
         playerInputController = new PlayerInputController();
-        networkInputController = new NetworkInputController();
+        networkInputController = new NetworkInputController(this, networkName);
     }
 
     private void FixedUpdate() {
         InputController ic = usePlayerInput ? (InputController) playerInputController : (InputController) networkInputController;
         Vector2 input = ic.GetInput();
+        sr.sprite = input.x < 0f ? left : input.x > 0f ? right : forward;
         float upDotVelocity = Vector2.Dot(transform.up, rb.velocity);
         Move(input, upDotVelocity);
         Turn(input, upDotVelocity);
