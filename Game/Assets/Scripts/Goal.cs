@@ -3,11 +3,15 @@ using UnityEngine;
 
 public class Goal : MonoBehaviour {
 
-    public event EventHandler GoalReached;
+    private GoalManager gm;
 
     private void OnTriggerEnter2D() {
-        GoalReached?.Invoke(this, EventArgs.Empty);
-        GoalReached = null;
+        gm?.Next();
+        gm = null;
+    }
+
+    public void SetGM(GoalManager gm) {
+        this.gm = gm;
     }
 
 }

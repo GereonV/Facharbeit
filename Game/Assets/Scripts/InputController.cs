@@ -22,15 +22,19 @@ namespace InputManagement {
 
         private int[] layers = new int[] {7, 12, 8, 4, 2};
 
-        public int index = 0;
-        public const int generationSize = 50;
+        public int index;
+        public const int generationSize = 10;
         private NeuralNetwork[] generation;
+        public NeuralNetwork this[in int i] {
+            get => generation[i];
+        }
 
         private GoalManager gm;
         private PlayerController controller;
         private Rigidbody2D rb;
 
         public NetworkInputController(in PlayerController controller, in string name) {
+            index = 0;
             gm = GameObject.Find("Goals").GetComponent<GoalManager>();
             this.controller = controller;
             rb = controller.GetComponent<Rigidbody2D>();
@@ -40,9 +44,10 @@ namespace InputManagement {
             GenerateGeneration(neuralNetwork);
         }
 
-        private void GenerateGeneration(in NeuralNetwork neuralNetwork) {
+        public void GenerateGeneration(in NeuralNetwork neuralNetwork) {
             generation = new NeuralNetwork[generationSize];
-            for(int i = 0; i < generationSize; i++)
+            generation[0] = neuralNetwork;
+            for(int i = 1; i < generationSize; i++)
                 (generation[i] = new NeuralNetwork(neuralNetwork)).Mutate(controller.mutationAmount);
         }
 
@@ -69,7 +74,7 @@ namespace InputManagement {
             }
         }
 
-        public void Save(in string name) {
+        public void Save(in int index, in string name) {
             generation[index].Save(name);
         }
 
