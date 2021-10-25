@@ -28,6 +28,8 @@ public class PlayerController : MonoBehaviour {
     [SerializeField]
     private bool usePlayerInput = true;
 
+    public float mutationAmount = .15f;
+
     [SerializeField]
     private string networkName;
 
@@ -70,6 +72,10 @@ public class PlayerController : MonoBehaviour {
         Vector2 forwardVelocity = transform.up * upDotVelocity;
         Vector2 sidewaysVelocity = transform.right * Vector2.Dot(transform.right, rb.velocity);
         rb.velocity = forwardVelocity + driftStrength * sidewaysVelocity;
+    }
+
+    public void Save() {
+        networkInputController?.Save(networkName);
     }
 
 }

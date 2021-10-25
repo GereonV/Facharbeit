@@ -22,27 +22,33 @@ namespace InputManagement {
 
         private int[] layers = new int[] {7, 12, 8, 4, 2};
 
-        private string name;
-
-        private NeuralNetwork neuralNetwork;
+        public int index = 0;
+        public const int generationSize = 50;
+        private NeuralNetwork[] generation;
 
         private GoalManager gm;
         private PlayerController controller;
         private Rigidbody2D rb;
 
         public NetworkInputController(in PlayerController controller, in string name) {
-            this.name = name;
             gm = GameObject.Find("Goals").GetComponent<GoalManager>();
             this.controller = controller;
             rb = controller.GetComponent<Rigidbody2D>();
-            neuralNetwork = NeuralNetwork.Load(name);
+            NeuralNetwork neuralNetwork = NeuralNetwork.Load(name);
             if(neuralNetwork is null || neuralNetwork.InputSize != layers[0])
                 neuralNetwork = new NeuralNetwork(layers);
+            GenerateGeneration(neuralNetwork);
+        }
+
+        private void GenerateGeneration(in NeuralNetwork neuralNetwork) {
+            generation = new NeuralNetwork[generationSize];
+            for(int i = 0; i < generationSize; i++)
+                (generation[i] = new NeuralNetwork(neuralNetwork)).Mutate(controller.mutationAmount);
         }
 
         Vector2 InputController.GetInput() {
             float[] inputs = GetInputLayer();
-            return Convert(neuralNetwork.FeedForward(new Vector(inputs)));
+            return Convert(generation[index].FeedForward(new Vector(inputs)));
 
             float[] GetInputLayer() {
                 float[] inputs = new float[layers[0]];
@@ -58,9 +64,13 @@ namespace InputManagement {
                 return inputs;
             }
 
-            Vector2 Convert(Vector vector) {
+            Vector2 Convert(in Vector vector) {
                 return new Vector2(vector[0], vector[1]);
             }
+        }
+
+        public void Save(in string name) {
+            generation[index].Save(name);
         }
 
     }
