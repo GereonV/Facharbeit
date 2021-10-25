@@ -23,11 +23,10 @@ public class GoalManager : MonoBehaviour {
             lap++;
         }
         transform.GetChild(currentGoalIndex).GetComponent<Goal>().SetGM(this);
-        Debug.Log(currentGoalIndex);
     }
 
     public float GetScore(Transform t) {
-        return (lap * transform.childCount + currentGoalIndex) * 100f + Mathf.Min(1f / Vector2.Distance(t.position, NextGoal), 80f);
+        return (lap * transform.childCount + currentGoalIndex) * 100f + Mathf.Min(100f / Mathf.Pow(Vector2.Distance(t.position, NextGoal), 2), 80f);
     }
 
     public void Reset() {

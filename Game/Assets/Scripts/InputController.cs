@@ -23,7 +23,7 @@ namespace InputManagement {
         private int[] layers = new int[] {7, 12, 8, 4, 2};
 
         public int index;
-        public const int generationSize = 10;
+        public const int generationSize = 100;
         private NeuralNetwork[] generation;
         public NeuralNetwork this[in int i] {
             get => generation[i];
